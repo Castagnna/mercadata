@@ -31,7 +31,7 @@ def transform(
     por cada cliente. Depois pega-se os produtos mais comprados por categoria.
     Então recomenda-se o primeiro produto mais comprado das 5 categorias que
     o cliente mais compra, excluindo os produtos que o cliente já comprou no passado.
-    Caso não atinga 5 produtos por cliente, recomenda-se o próximo produto mais comprado
+    Caso não atinja 5 produtos por cliente, recomenda-se o próximo produto mais comprado
     da categoria até que chegue em 5 recomendacoes.
     """
     produtos = prepara_produtos(produtos).cache()
