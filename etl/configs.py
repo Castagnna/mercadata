@@ -1,1 +1,1 @@
-ROOT = "/opt/notebooks/data/mercafacil"
+ROOT = "gs://mercafacil/data"
