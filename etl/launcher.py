@@ -21,10 +21,15 @@ def _parse_args():
     )
 
     parser.add_argument(
+        "layer",
+        help="The name of datalake layer job you want to run",
+    )
+
+    parser.add_argument(
         "job_name",
         help="The name of the spark job you want to run",
     )
-    parser.add_argument("-l", "--layer", help="datalake layer", default="bronze")
+
     parser.add_argument("-e", "--env", help="environment", default="prd")
     parser.add_argument("-m", "--mode", help="mode", default="cluster")
     parser.add_argument("-d", "--datetime", help="reference datetime", default="today")
@@ -42,13 +47,8 @@ if __name__ == "__main__":
 
     args = _parse_args()
 
-    job_algorithm = args.job_name
-    if len(job_algorithm) == 1:
-        job_algorithm.append("algorithm")
-
-    print("JOB: ", job_algorithm)
-
     module = "etl.jobs.{}.{}.runner".format(args.layer, args.job_name)
+    print("JOB:", module)
     job_module = importlib.import_module(module)
     job_module.setup(
         args.env, args.datetime, args.mode, args.dry_run
