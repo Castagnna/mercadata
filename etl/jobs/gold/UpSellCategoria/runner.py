@@ -26,6 +26,14 @@ def transform(
     vendas_por_produto: DataFrame,
     top_n: int,
 ) -> DataFrame:
+    """Recomenda 5 produtos nunca comprados para o cliente.
+    Lógica: em determinada loja, pega-se as 5 categorias mais compradas 
+    por cada cliente. Depois pega-se os produtos mais comprados por categoria.
+    Então recomenda-se o primeiro produto mais comprado das 5 categorias que
+    o cliente mais compra, excluindo os produtos que o cliente já comprou no passado.
+    Caso não atinga 5 produtos por cliente, recomenda-se o próximo produto mais comprado
+    da categoria até que chegue em 5 recomendacoes.
+    """
     produtos = prepara_produtos(produtos).cache()
 
     produtos_por_cliente = prepara_produtos_por_cliente(produtos_por_cliente).cache()

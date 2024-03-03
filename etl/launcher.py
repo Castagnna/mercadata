@@ -3,10 +3,7 @@ import sys
 import importlib
 
 # Adding "/mercadata/etl/.." to sys.path
-if (
-    not any("/mercadata/etl/.." in p for p in sys.path)
-    and "__file__" in vars()
-):
+if not any("/mercadata/etl/.." in p for p in sys.path) and "__file__" in vars():
     path = os.path.join(os.path.dirname(__file__), os.pardir)
     sys.path.append(path)
 
@@ -50,6 +47,4 @@ if __name__ == "__main__":
     module = "etl.jobs.{}.{}.runner".format(args.layer, args.job_name)
     print("JOB:", module)
     job_module = importlib.import_module(module)
-    job_module.setup(
-        args.env, args.datetime, args.mode, args.dry_run
-    )
+    job_module.setup(args.env, args.datetime, args.mode, args.dry_run)
