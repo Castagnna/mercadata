@@ -2,6 +2,8 @@
 
 PySpark jobs for Mercafacil ETL.
 
+![Arquitetura](mercafacil.drawio.svg)
+
 ## Running
 ```bash
 cd mercadata/etl
