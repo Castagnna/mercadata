@@ -9,3 +9,6 @@ def formata_dados(categorias: DataFrame) -> DataFrame:
         F.col("DES_CATEGORIA").cast(StringType()),
         F.col("COD_ID_CATEGORIA_PAI").cast(IntegerType()).cast(StringType()),
     )
+
+def dumb_func(x, y):
+    return x + y
