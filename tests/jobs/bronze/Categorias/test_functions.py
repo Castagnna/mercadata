@@ -1,9 +1,15 @@
+import os
+import sys
 import pytest
-# from etl.jobs.bronze.Categorias.functions import dumb_func
 
 
-def dumb_func(x, y):
-    return x + y
+if not any("/mercadata/etl/.." in p for p in sys.path) and "__file__" in vars():
+    path = os.path.join(
+        os.path.dirname(__file__).split("/tests")[0], "etl", os.pardir
+    )
+    sys.path.append(path)
+
+from etl.jobs.bronze.Categorias.functions import dumb_func, formata_dados
 
 
 def test_dumb_func():
