@@ -17,3 +17,6 @@ def formata_dados(vendas: DataFrame, file_date: str) -> DataFrame:
         "VAL_QUANTIDADE_KG",
         F.to_date(F.lit(file_date), "yyyyMM").alias("DATA_PROCESSAMENTO"),
     )
+
+def dumb_func(x, y):
+    return x + y
