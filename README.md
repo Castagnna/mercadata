@@ -1,4 +1,5 @@
-# MercaData
+[![Unit tests](https://github.com/Castagnna/mercadata/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/Castagnna/mercadata/actions/workflows/python-app.yml)
+# MercaData 
 
 PySpark jobs for Mercafacil ETL.
 
