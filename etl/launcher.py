@@ -43,8 +43,8 @@ def _parse_args():
 if __name__ == "__main__":
 
     args = _parse_args()
-
-    module = "etl.jobs.{}.{}.runner".format(args.layer, args.job_name)
+    app_name = "{}.{}".format(args.layer, args.job_name)
+    module = "etl.jobs.{}.runner".format(app_name)
     print("JOB:", module)
     job_module = importlib.import_module(module)
-    job_module.setup(args.env, args.datetime, args.mode, args.dry_run)
+    job_module.setup(args.env, args.datetime, app_name, args.mode, args.dry_run)
