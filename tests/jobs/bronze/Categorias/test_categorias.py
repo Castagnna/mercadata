@@ -1,6 +1,5 @@
 import os
 import sys
-import pytest
 
 
 if not any("/mercadata/etl/.." in p for p in sys.path) and "__file__" in vars():
@@ -13,7 +12,9 @@ from etl.jobs.bronze.Categorias.functions import dumb_func, formata_dados
 
 
 def test_dumb_func():
-    assert dumb_func(1, 5) == 6
+    return_value = dumb_func(1, 5)
+    assert isinstance(return_value, int)
+    assert return_value == 6
 
 
 def test_dumb_func2():
