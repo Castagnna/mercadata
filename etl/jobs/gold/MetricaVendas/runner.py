@@ -1,45 +1,39 @@
 from os import path as P
-from datetime import datetime
 from pyspark.sql import DataFrame
-from tools.spark import start_spark
-from etl.configs import ROOT
+from jobs.setup import BaseSetup
 from .functions import calcula_metricas_de_vendas_por_produto
 
 
-def transform(produtos: DataFrame, vendas_por_produto: DataFrame) -> DataFrame:
-    return calcula_metricas_de_vendas_por_produto(produtos, vendas_por_produto)
-
-
-def setup(
-    env="prd",
-    date_ref="today",
-    app_name="Spark Job",
-    deploy_mode="standalone",
-    dry_run=False,
-):
-    job_start_dttm = datetime.now()
-
-    spark = start_spark(app_name, deploy_mode)
-
-    # inputs
-    produtos = (
-        spark.read.parquet(P.join(ROOT, env, "bronze", "produtos"))
-    )
-
-    vendas_por_produto = spark.read.parquet(
-        P.join(ROOT, env, "silver", "vendas_por_produto")
-    )
-
-    # output
-    output = None
-    if not dry_run:
-        output = transform(produtos, vendas_por_produto)
-
-        generation = job_start_dttm.strftime("%Y%m%d-%H%M%S")
-
-        (
-            output
-            .write
-            .mode("overwrite")
-            .parquet(P.join(ROOT, env, "gold", "metricas_de_vendas_por_produto", generation))
+class Setup(BaseSetup):
+    def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop):
+        super(Setup, self).__init__(
+            env=env,
+            app_name=app_name,
+            deploy_mode=deploy_mode,
+            dry_run=dry_run,
+            noop=noop,
         )
+
+    def load(self) -> dict:
+        return {
+            "produtos": self.spark.read.parquet(
+                P.join(self.root, self.env, "bronze", "produtos")
+            ),
+            "vendas_por_produto": self.spark.read.parquet(
+                P.join(self.root, self.env, "silver", "vendas_por_produto")
+            ),
+        }
+
+    @staticmethod
+    def transform(produtos: DataFrame, vendas_por_produto: DataFrame) -> DataFrame:
+        return calcula_metricas_de_vendas_por_produto(produtos, vendas_por_produto)
+
+    def write(self, output):
+        # generation = job_start_dttm.strftime("%Y%m%d-%H%M%S")
+        # (
+        #     output
+        #     .write
+        #     .mode("overwrite")
+        #     .parquet(P.join(ROOT, env, "gold", "metricas_de_vendas_por_produto", generation))
+        # )
+        return super().write(output)
