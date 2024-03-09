@@ -16,7 +16,9 @@ class Setup(BaseSetup):
 
     def load(self) -> dict:
         return {
-            "categorias": self.spark.read.parquet(P.join(self.root, self.env, "raw", "categorias"))
+            "categorias": self.spark.read.parquet(
+                P.join(self.root, self.env, "raw", "categorias")
+            )
         }
 
     @staticmethod
