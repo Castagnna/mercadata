@@ -39,3 +39,5 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+      env:
+        PYARROW_IGNORE_TIMEZONE: 1
