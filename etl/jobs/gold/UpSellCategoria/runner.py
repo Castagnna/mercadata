@@ -27,7 +27,7 @@ def transform(
     top_n: int,
 ) -> DataFrame:
     """Recomenda 5 produtos nunca comprados para o cliente.
-    Lógica: em determinada loja, pega-se as 5 categorias mais compradas 
+    Lógica: em determinada loja, pega-se as 5 categorias mais compradas
     por cada cliente. Depois pega-se os produtos mais comprados por categoria.
     Então recomenda-se o primeiro produto mais comprado das 5 categorias que
     o cliente mais compra, excluindo os produtos que o cliente já comprou no passado.
@@ -80,6 +80,7 @@ def setup(
     app_name="Spark Job",
     deploy_mode="standalone",
     dry_run=False,
+    noop=False,
 ):
     job_start_dttm = datetime.now()
 
@@ -108,10 +109,15 @@ def setup(
 
         generation = job_start_dttm.strftime("%Y%m%d-%H%M%S")
 
-        (
-            output.write.partitionBy("COD_ID_LOJA")
-            .mode("overwrite")
-            .parquet(
-                P.join(ROOT, env, "gold", "top_5_produtos_para_o_cliente", generation)
+        if not noop:
+            (
+                output.write.partitionBy("COD_ID_LOJA")
+                .mode("overwrite")
+                .parquet(
+                    P.join(
+                        ROOT, env, "gold", "top_5_produtos_para_o_cliente", generation
+                    )
+                )
             )
-        )
+        else:
+            output.write.format("noop").mode("overwrite").save()

@@ -55,9 +55,16 @@ if __name__ == "__main__":
     job_kwargs = dict([x.split("=") for x in (args.job_kwargs or [])])
 
     app_name = "{}.{}.{}".format(args.layer, args.job_name, args.env)
-    module = "etl.jobs.{}.{}.runner".format(args.layer, args.job_name)
+    module = "etl.jobs.{}.{}.runner_v2".format(args.layer, args.job_name)
     print(f"{module = }")
     job_module = importlib.import_module(module)
-    job_module.setup(
-        args.env, args.datetime, app_name, args.mode, args.dry_run, args.noop, **job_kwargs
-    )
+
+    job_module.Setup(
+        args.env,
+        args.datetime,
+        app_name,
+        args.mode,
+        args.dry_run,
+        args.noop,
+        **job_kwargs,
+    ).run()

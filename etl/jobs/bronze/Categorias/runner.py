@@ -15,6 +15,7 @@ def setup(
     app_name="Spark Job",
     deploy_mode="standalone",
     dry_run=False,
+    noop=False,
 ):
     spark = start_spark(app_name, deploy_mode)
 
@@ -25,13 +26,14 @@ def setup(
     output = None
     if not dry_run:
         output = transform(categorias)
-
-        (
-            output
-            .coalesce(1)
-            .write
-            .mode("overwrite")
-            .parquet(P.join(ROOT, env, "bronze", "categorias"))
-        )
-
         print(P.join(ROOT, env, "bronze", "categorias"))
+        if not noop:
+            (
+                output
+                .coalesce(1)
+                .write
+                .mode("overwrite")
+                .parquet(P.join(ROOT, env, "bronze", "categorias"))
+            )
+        else:
+            output.write.format("noop").mode("overwrite").save()
