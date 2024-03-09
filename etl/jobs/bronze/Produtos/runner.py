@@ -1,35 +1,32 @@
 from os import path as P
 from pyspark.sql import DataFrame
-from tools.spark import start_spark
-from etl.configs import ROOT
+from jobs.setup import BaseSetup
 from .functions import formata_dados
 
 
-def transform(produtos: DataFrame) -> DataFrame:
-    return formata_dados(produtos)
-
-
-def setup(
-    env="prd",
-    date_ref="today",
-    app_name="Spark Job",
-    deploy_mode="standalone",
-    dry_run=False,
-):
-    spark = start_spark(app_name, deploy_mode)
-
-    # inputs
-    produtos = spark.read.parquet(P.join(ROOT, env, "raw", "produtos"))
-
-    # output
-    output = None
-    if not dry_run:
-        output = transform(produtos)
-
-        (
-            output.write.mode("overwrite").parquet(
-                P.join(ROOT, env, "bronze", "produtos")
-            )
+class Setup(BaseSetup):
+    def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop):
+        super(Setup, self).__init__(
+            env=env,
+            app_name=app_name,
+            deploy_mode=deploy_mode,
+            dry_run=dry_run,
+            noop=noop,
         )
 
-        print(P.join(ROOT, env, "bronze", "produtos"))
+    def load(self) -> dict:
+        return {
+            "produtos": self.spark.read.parquet(P.join(self.root, self.env, "raw", "produtos"))
+        }
+
+    @staticmethod
+    def transform(produtos: DataFrame) -> DataFrame:
+        return formata_dados(produtos)
+
+    def write(self, output):
+        # (
+        #     output.write.mode("overwrite").parquet(
+        #         P.join(ROOT, env, "bronze", "produtos")
+        #     )
+        # )
+        return super().write(output)

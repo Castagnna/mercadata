@@ -1,39 +1,34 @@
 from os import path as P
 from pyspark.sql import DataFrame
-from tools.spark import start_spark
-from etl.configs import ROOT
+from jobs.setup import BaseSetup
 from .functions import formata_dados
 
 
-def transform(categorias: DataFrame) -> DataFrame:
-    return formata_dados(categorias)
+class Setup(BaseSetup):
+    def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop):
+        super(Setup, self).__init__(
+            env=env,
+            app_name=app_name,
+            deploy_mode=deploy_mode,
+            dry_run=dry_run,
+            noop=noop,
+        )
 
+    def load(self) -> dict:
+        return {
+            "categorias": self.spark.read.parquet(P.join(self.root, self.env, "raw", "categorias"))
+        }
 
-def setup(
-    env="prd",
-    date_ref="today",
-    app_name="Spark Job",
-    deploy_mode="standalone",
-    dry_run=False,
-    noop=False,
-):
-    spark = start_spark(app_name, deploy_mode)
+    @staticmethod
+    def transform(categorias: DataFrame) -> DataFrame:
+        return formata_dados(categorias)
 
-    # inputs
-    categorias = spark.read.parquet(P.join(ROOT, env, "raw", "categorias"))
-
-    # output
-    output = None
-    if not dry_run:
-        output = transform(categorias)
-        print(P.join(ROOT, env, "bronze", "categorias"))
-        if not noop:
-            (
-                output
-                .coalesce(1)
-                .write
-                .mode("overwrite")
-                .parquet(P.join(ROOT, env, "bronze", "categorias"))
-            )
-        else:
-            output.write.format("noop").mode("overwrite").save()
+    def write(self, output):
+        # (
+        #     output
+        #     .coalesce(1)
+        #     .write
+        #     .mode("overwrite")
+        #     .parquet(P.join(ROOT, env, "bronze", "categorias"))
+        # )
+        return super().write(output)
