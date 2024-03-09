@@ -82,3 +82,4 @@ class BaseSetup(ABC):
         if not self.dry_run:
             output = self.transform(**loads)
             self.write(output)
+        self.spark.stop()
