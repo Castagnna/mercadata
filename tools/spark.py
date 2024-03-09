@@ -9,6 +9,7 @@ CORES_PER_EXECUTOR = 5
 PARALLELISM_PER_CORE = 2
 
 def start_spark(
+    app_name="Spark Job",
     deploy_mode="standalone",
     local_dir=None,
     executor_instances=None,
@@ -112,7 +113,7 @@ def start_spark(
         if value:
             builder = builder.config(key, value)
 
-    spark = builder.enableHiveSupport().getOrCreate()
+    spark = builder.enableHiveSupport().appName(app_name).getOrCreate()
 
     if set_checkpoint_dir:
         # Set a checkpoint dir to use DataFrame method .checkpoint()

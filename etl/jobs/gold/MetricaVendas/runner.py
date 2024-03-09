@@ -13,12 +13,13 @@ def transform(produtos: DataFrame, vendas_por_produto: DataFrame) -> DataFrame:
 def setup(
     env="prd",
     date_ref="today",
+    app_name="Spark Job",
     deploy_mode="standalone",
     dry_run=False,
 ):
     job_start_dttm = datetime.now()
 
-    spark = start_spark(deploy_mode)
+    spark = start_spark(app_name, deploy_mode)
 
     # inputs
     produtos = (

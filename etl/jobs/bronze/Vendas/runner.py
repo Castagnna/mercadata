@@ -15,10 +15,11 @@ def transform(vendas: DataFrame, file_date: str) -> DataFrame:
 def setup(
     env="prd",
     date_ref="today",
+    app_name="Spark Job",
     deploy_mode="standalone",
     dry_run=False,
 ):
-    spark = start_spark(deploy_mode)
+    spark = start_spark(app_name, deploy_mode)
 
     job_start_dttm = datetime.now()
 
