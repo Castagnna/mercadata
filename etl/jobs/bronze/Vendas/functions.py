@@ -8,7 +8,7 @@ def formata_dados(vendas: DataFrame, file_date: str) -> DataFrame:
         F.to_date("NUM_ANOMESDIA", "yyyyMMdd").alias("DATA_DA_COMPRA"),
         "COD_ID_CLIENTE",
         "DES_TIPO_CLIENTE",
-        "DES_SEXO_CLIENTE",
+        F.col("DES_SEXO_CLIENTE").cast("string"),
         "COD_ID_VENDA_UNICO",
         "COD_ID_PRODUTO",
         "VAL_VALOR_SEM_DESC",
@@ -17,6 +17,3 @@ def formata_dados(vendas: DataFrame, file_date: str) -> DataFrame:
         "VAL_QUANTIDADE_KG",
         F.to_date(F.lit(file_date), "yyyyMM").alias("DATA_PROCESSAMENTO"),
     )
-
-def dumb_func(x, y):
-    return x + y

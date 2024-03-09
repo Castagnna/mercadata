@@ -12,10 +12,11 @@ def transform(vendas: DataFrame) -> DataFrame:
 def setup(
     env="prd",
     date_ref="today",
+    app_name="Spark Job",
     deploy_mode="standalone",
     dry_run=False,
 ):
-    spark = start_spark(deploy_mode, executor_memory_gb=26)
+    spark = start_spark(app_name, deploy_mode, executor_memory_gb=26)
 
     # inputs
     vendas = spark.read.parquet(P.join(ROOT, env, "silver", "vendas_deduplicadas"))
