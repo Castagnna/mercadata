@@ -1,54 +1,41 @@
 from os import path as P
-from datetime import datetime
-from dateutil import parser as dateparser
 from pyspark.sql import DataFrame
-from tools.spark import start_spark
+from jobs.setup import BaseSetup
 from tools.schemas import schema_vendas
-from etl.configs import ROOT
 from .functions import formata_dados
 
-
-def transform(vendas: DataFrame, file_date: str) -> DataFrame:
-    return formata_dados(vendas, file_date)
-
-
-def setup(
-    env="prd",
-    date_ref="today",
-    app_name="Spark Job",
-    deploy_mode="standalone",
-    dry_run=False,
-):
-    spark = start_spark(app_name, deploy_mode)
-
-    job_start_dttm = datetime.now()
-
-    if date_ref == "today":
-        date_ref = job_start_dttm
-    else:
-        date_ref = dateparser.parse(date_ref)
-
-    ano_mes = f"{date_ref.year}{date_ref.month:02d}"
-
-    file = f"vendas_{ano_mes}.csv.gz"
-
-    # inputs
-    vendas = spark.read.csv(
-        P.join(ROOT, env, "raw", "vendas", file),
-        schema=schema_vendas,
-        sep=";",
-        header=True,
-    )
-
-    # output
-    output = None
-    if not dry_run:
-        output = transform(vendas, ano_mes)
-
-        (
-            output.write.partitionBy("DATA_DA_COMPRA", "DATA_PROCESSAMENTO")
-            .mode("append")
-            .parquet(P.join(ROOT, env, "bronze", "vendas"))
+class Setup(BaseSetup):
+    def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop):
+        super(Setup, self).__init__(
+            env=env,
+            date_ref=date_ref,
+            app_name=app_name,
+            deploy_mode=deploy_mode,
+            dry_run=dry_run,
+            noop=noop,
         )
 
-        print(P.join(ROOT, env, "bronze", "vendas"))
+    def load(self) -> dict:
+        ano_mes = f"{self.date_ref.year}{self.date_ref.month:02d}"
+        file = f"vendas_{ano_mes}.csv.gz"
+        return {
+            "vendas": self.spark.read.csv(
+                P.join(self.root, self.env, "raw", "vendas", file),
+                schema=schema_vendas,
+                sep=";",
+                header=True,
+            ),
+            "file_date": ano_mes,
+        }
+
+    @staticmethod
+    def transform(vendas: DataFrame, file_date: str) -> DataFrame:
+        return formata_dados(vendas, file_date)
+
+    def write(self, output):
+        # (
+        #     output.write.partitionBy("DATA_DA_COMPRA", "DATA_PROCESSAMENTO")
+        #     .mode("append")
+        #     .parquet(P.join(ROOT, env, "bronze", "vendas"))
+        # )
+        return super().write(output)

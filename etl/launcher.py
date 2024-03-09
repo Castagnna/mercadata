@@ -3,8 +3,8 @@ import sys
 import importlib
 
 # Adding "/mercadata/etl/.." to sys.path
-if not any("/mercadata/etl/.." in p for p in sys.path) and "__file__" in vars():
-    path = os.path.join(os.path.dirname(__file__), os.pardir)
+if not any("/mercadata/etl/.." in p for p in sys.path):
+    path = os.path.join(os.getcwd(), os.pardir)
     sys.path.append(path)
 
 
@@ -36,6 +36,14 @@ def _parse_args():
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "-n",
+        "--noop",
+        help="set spark write format to noop",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument("--job-kwargs", help="job arguments", required=False, nargs="*")
 
     return parser.parse_args()
 
@@ -43,8 +51,20 @@ def _parse_args():
 if __name__ == "__main__":
 
     args = _parse_args()
-    app_name = "{}.{}".format(args.layer, args.job_name)
-    module = "etl.jobs.{}.runner".format(app_name)
-    print("JOB:", module)
+
+    job_kwargs = dict([x.split("=") for x in (args.job_kwargs or [])])
+
+    app_name = "{}.{}.{}".format(args.layer, args.job_name, args.env)
+    module = "etl.jobs.{}.{}.runner".format(args.layer, args.job_name)
+    print(f"{module = }")
     job_module = importlib.import_module(module)
-    job_module.setup(args.env, args.datetime, app_name, args.mode, args.dry_run)
+
+    job_module.Setup(
+        args.env,
+        args.datetime,
+        app_name,
+        args.mode,
+        args.dry_run,
+        args.noop,
+        **job_kwargs,
+    ).run()

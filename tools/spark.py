@@ -21,7 +21,8 @@ def start_spark(
     extra_conf={},
     print_conf=False,
 ):
-    print("deploy_mode: ", deploy_mode)
+    print(f"{app_name = }")
+    print(f"{deploy_mode = }")
     if deploy_mode == "cluster":
         # trust the cluster configuration except unless explicit values are given
 
