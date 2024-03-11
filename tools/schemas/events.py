@@ -1,7 +1,7 @@
 from pyspark.sql.types import *
 
 
-schema_vendas = StructType(
+vendas = StructType(
     [
         StructField("COD_ID_LOJA", StringType(), True),
         StructField("NUM_ANOMESDIA", StringType(), True),

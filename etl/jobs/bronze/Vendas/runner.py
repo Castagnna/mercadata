@@ -1,8 +1,11 @@
-from os import path as P
+# from os import path as P
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
-from tools.schemas import schema_vendas
+
+# from tools.schemas.events import
+from tools.io import read_csv
 from .functions import formata_dados
+
 
 class Setup(BaseSetup):
     def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop):
@@ -17,13 +20,13 @@ class Setup(BaseSetup):
 
     def load(self) -> dict:
         ano_mes = f"{self.date_ref.year}{self.date_ref.month:02d}"
-        file = f"vendas_{ano_mes}.csv.gz"
         return {
-            "vendas": self.spark.read.csv(
-                P.join(self.root, self.env, "raw", "vendas", file),
-                schema=schema_vendas,
-                sep=";",
-                header=True,
+            "vendas": read_csv(
+                self.spark,
+                self.env,
+                "raw",
+                "vendas",
+                self.date_ref,
             ),
             "file_date": ano_mes,
         }
