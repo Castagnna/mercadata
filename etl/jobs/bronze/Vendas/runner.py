@@ -1,8 +1,5 @@
-# from os import path as P
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
-
-# from tools.schemas.events import
 from tools.io import read_csv
 from .functions import formata_dados
 
@@ -27,6 +24,7 @@ class Setup(BaseSetup):
                 "raw",
                 "vendas",
                 self.date_ref,
+                dry_run=self.dry_run,
             ),
             "file_date": ano_mes,
         }

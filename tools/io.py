@@ -36,3 +36,22 @@ def read_csv(
         sep=";",
         header=True,
     )
+
+def read_parquet(
+    spark,
+    env,
+    layer,
+    event,
+    date_ref=None,
+    provider="os",
+    select_fields=["*"],
+    dry_run=False,
+):
+    # TODO: def resolve_paths()
+    paths = P.join(ROOTS[provider], env, layer, event)
+    print(f"{paths = }")
+
+    if dry_run:
+        return
+
+    return spark.read.parquet(paths).select(*select_fields)
