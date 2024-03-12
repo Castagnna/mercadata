@@ -8,6 +8,7 @@ OVERHEAD_FRACTION = 0.1
 CORES_PER_EXECUTOR = 5
 PARALLELISM_PER_CORE = 2
 
+
 def start_spark(
     app_name="Spark Job",
     deploy_mode="standalone",

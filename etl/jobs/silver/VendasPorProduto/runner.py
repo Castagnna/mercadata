@@ -1,6 +1,6 @@
-from os import path as P
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
+from tools.io import read_parquet
 from .functions import agrega_vendas_por_produto
 
 
@@ -16,8 +16,12 @@ class Setup(BaseSetup):
 
     def load(self) -> dict:
         return {
-            "vendas": self.spark.read.parquet(
-                P.join(self.root, self.env, "silver", "vendas_deduplicadas")
+            "vendas": read_parquet(
+                self.spark,
+                self.env,
+                "silver",
+                "vendas_deduplicadas",
+                dry_run=self.dry_run,
             )
         }
 

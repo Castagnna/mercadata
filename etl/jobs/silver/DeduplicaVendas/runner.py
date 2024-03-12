@@ -1,6 +1,6 @@
-from os import path as P
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
+from tools.io import read_parquet
 from .functions import deduplica_vendas
 
 
@@ -16,7 +16,9 @@ class Setup(BaseSetup):
 
     def load(self) -> dict:
         return {
-            "vendas": self.spark.read.parquet(P.join(self.root, self.env, "bronze", "vendas"))
+            "vendas": read_parquet(
+                self.spark, self.env, "bronze", "vendas", dry_run=self.dry_run
+            )
         }
 
     @staticmethod

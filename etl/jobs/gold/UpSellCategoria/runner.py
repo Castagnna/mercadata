@@ -1,6 +1,6 @@
-from os import path as P
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
+from tools.io import read_parquet
 from etl.jobs.common import pipe, upartial
 from .functions import (
     prepara_produtos,
@@ -30,14 +30,22 @@ class Setup(BaseSetup):
 
     def load(self) -> dict:
         return {
-            "produtos": self.spark.read.parquet(
-                P.join(self.root, self.env, "bronze", "produtos")
+            "produtos": read_parquet(
+                self.spark, self.env, "bronze", "produtos", dry_run=self.dry_run
             ),
-            "produtos_por_cliente": self.spark.read.parquet(
-                P.join(self.root, self.env, "silver", "produtos_por_cliente")
+            "produtos_por_cliente": read_parquet(
+                self.spark,
+                self.env,
+                "silver",
+                "produtos_por_cliente",
+                dry_run=self.dry_run,
             ),
-            "vendas_por_produto": self.spark.read.parquet(
-                P.join(self.root, self.env, "silver", "vendas_por_produto")
+            "vendas_por_produto": read_parquet(
+                self.spark,
+                self.env,
+                "silver",
+                "vendas_por_produto",
+                dry_run=self.dry_run,
             ),
             "top_n": 3,
         }
