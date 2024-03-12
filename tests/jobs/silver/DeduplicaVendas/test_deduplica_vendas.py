@@ -1,5 +1,5 @@
 from datetime import datetime
-from pyspark.testing.utils import assertDataFrameEqual, assertSchemaEqual
+from pyspark.testing.utils import assertDataFrameEqual
 from pyspark.sql.types import StructType, StructField, StringType, DateType
 from etl.jobs.silver.DeduplicaVendas.functions import deduplica_vendas
 
