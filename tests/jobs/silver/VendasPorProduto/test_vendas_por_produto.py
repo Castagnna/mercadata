@@ -3,7 +3,7 @@ from pyspark.sql.types import StructType, StructField, StringType, LongType, Dou
 from etl.jobs.silver.VendasPorProduto.functions import agrega_vendas_por_produto
 
 
-def test_formata_dados(spark_fixture):
+def test_agrega_vendas_por_produto(spark_fixture):
     original = spark_fixture.createDataFrame(
         [
             ("L1", "C1", "P1", 1.0, 10.55),
