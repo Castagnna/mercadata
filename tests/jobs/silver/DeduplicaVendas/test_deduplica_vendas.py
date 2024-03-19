@@ -7,12 +7,16 @@ from etl.jobs.silver.DeduplicaVendas.functions import deduplica_vendas
 def test_deduplica_vendas(spark_fixture):
     original = spark_fixture.createDataFrame(
         [
-            ("V1", "P1", datetime(2024, 1, 1), datetime(2024, 2, 1)),
-            ("V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 1)),
-            ("V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 2)),
+            ("L1", "V1", "P1", datetime(2024, 1, 1), datetime(2024, 2, 1)),
+            ("L1", "V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 1)),
+            ("L1", "V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 2)),
+            ("L2", "V1", "P1", datetime(2024, 1, 1), datetime(2024, 2, 1)),
+            ("L2", "V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 1)),
+            ("L2", "V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 2)),
         ],
         StructType(
             [
+                StructField("COD_ID_LOJA", StringType(), True),
                 StructField("COD_ID_VENDA_UNICO", StringType(), True),
                 StructField("COD_ID_PRODUTO", StringType(), True),
                 StructField("DATA_PROCESSAMENTO", DateType(), True),
@@ -24,10 +28,12 @@ def test_deduplica_vendas(spark_fixture):
 
     expected = spark_fixture.createDataFrame(
         [
-            ("V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 2)),
+            ("L1", "V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 2)),
+            ("L2", "V1", "P1", datetime(2024, 1, 2), datetime(2024, 2, 2)),
         ],
         StructType(
             [
+                StructField("COD_ID_LOJA", StringType(), True),
                 StructField("COD_ID_VENDA_UNICO", StringType(), True),
                 StructField("COD_ID_PRODUTO", StringType(), True),
                 StructField("DATA_PROCESSAMENTO", DateType(), True),
