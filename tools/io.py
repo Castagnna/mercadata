@@ -5,7 +5,7 @@ from pyspark.sql import functions as F
 
 ROOTS = {
     "gcp": "gs://mercafacil/data",
-    "os": "/home/castagna/voltz/notebooks/data/mercafacil",
+    "os": "/home/castagna/github/mercadata/data",
 }
 
 
@@ -49,9 +49,7 @@ def read_csv(
     dry_run=False,
 ):
     # TODO: def resolve_paths()
-    ano_mes = f"{date_ref.year}{date_ref.month:02d}"
-    file = f"{event}_{ano_mes}.csv.gz"
-    paths = P.join(ROOTS[provider], env, layer, event, file)
+    paths = P.join(ROOTS[provider], env, layer, event)
     print(f"{paths = }")
 
     schema = custom_schema or get_schema("events", event, select_fields, drop_fields)
