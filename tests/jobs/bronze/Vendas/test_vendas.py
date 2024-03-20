@@ -8,7 +8,6 @@ def test_formata_dados(spark_fixture):
     sample_data = [
         {
             "COD_ID_LOJA": "LOJA_1",
-            "NUM_ANOMESDIA": "20240101",
             "COD_ID_CLIENTE": "1001",
             "DES_TIPO_CLIENTE": "PJ",
             "DES_SEXO_CLIENTE": "",
@@ -18,16 +17,17 @@ def test_formata_dados(spark_fixture):
             "VAL_VALOR_DESCONTO": 2.00,
             "VAL_VALOR_COM_DESC": 8.55,
             "VAL_QUANTIDADE_KG": 1.653,
+            "DATA_DA_COMPRA": "2024-01-01",
+            "DATA_PROCESSAMENTO": "2024-01-02",
         },
     ]
     original = spark_fixture.createDataFrame(sample_data)
-    transformed = formata_dados(original, "202402")
+    transformed = formata_dados(original)
 
     expected = spark_fixture.createDataFrame(
         [
             (
                 "LOJA_1",
-                datetime(2024, 1, 1),
                 "1001",
                 "PJ",
                 "",
@@ -37,13 +37,13 @@ def test_formata_dados(spark_fixture):
                 2.00,
                 8.55,
                 1.653,
-                datetime(2024, 2, 1),
+                datetime(2024, 1, 1),
+                datetime(2024, 1, 2),
             )
         ],
         StructType(
             [
                 StructField("COD_ID_LOJA", StringType(), True),
-                StructField("DATA_DA_COMPRA", DateType(), True),
                 StructField("COD_ID_CLIENTE", StringType(), True),
                 StructField("DES_TIPO_CLIENTE", StringType(), True),
                 StructField("DES_SEXO_CLIENTE", StringType(), True),
@@ -53,10 +53,11 @@ def test_formata_dados(spark_fixture):
                 StructField("VAL_VALOR_DESCONTO", DoubleType(), True),
                 StructField("VAL_VALOR_COM_DESC", DoubleType(), True),
                 StructField("VAL_QUANTIDADE_KG", DoubleType(), True),
+                StructField("DATA_DA_COMPRA", DateType(), True),
                 StructField("DATA_PROCESSAMENTO", DateType(), True),
             ]
         ),
     )
 
-    assertDataFrameEqual(transformed, expected)
     assertSchemaEqual(transformed.schema, expected.schema)
+    assertDataFrameEqual(transformed, expected)

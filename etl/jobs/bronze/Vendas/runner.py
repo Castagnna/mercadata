@@ -16,7 +16,6 @@ class Setup(BaseSetup):
         )
 
     def load(self) -> dict:
-        ano_mes = f"{self.date_ref.year}{self.date_ref.month:02d}"
         return {
             "vendas": read_csv(
                 self.spark,
@@ -26,12 +25,11 @@ class Setup(BaseSetup):
                 self.date_ref,
                 dry_run=self.dry_run,
             ),
-            "file_date": ano_mes,
         }
 
     @staticmethod
-    def transform(vendas: DataFrame, file_date: str) -> DataFrame:
-        return formata_dados(vendas, file_date)
+    def transform(vendas: DataFrame) -> DataFrame:
+        return formata_dados(vendas)
 
     def write(self, output):
         # (
