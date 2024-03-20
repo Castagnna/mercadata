@@ -6,9 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# sample data
+data/
+
 # Distribution / packaging
 .Python
-data/
 spark/
 build/
 develop-eggs/
