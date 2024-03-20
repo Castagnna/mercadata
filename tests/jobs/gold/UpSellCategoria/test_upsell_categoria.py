@@ -11,7 +11,7 @@ from etl.jobs.gold.UpSellCategoria.functions import (
     prepara_produtos,
     prepara_produtos_por_cliente,
     pega_produtos_que_o_cliente_ja_comprou,
-    # calcula_qtd_de_transacoes_por_categoria_por_cliente,
+    calcula_qtd_de_transacoes_por_categoria_por_cliente,
     # calcula_top_5_categorias_por_cliente,
     # prepara_vendas_por_produto,
     # calcula_top_10_produtos_por_categoria,
@@ -113,6 +113,62 @@ def test_pega_produtos_que_o_cliente_ja_comprou(spark_fixture):
                 StructField("COD_ID_LOJA", StringType(), True),
                 StructField("COD_ID_CLIENTE", StringType(), True),
                 StructField("produtos_ja_comprados", ArrayType(StringType()), True),
+            ]
+        ),
+    )
+
+    assertDataFrameEqual(transformed, expected)
+
+
+def test_calcula_qtd_de_transacoes_por_categoria_por_cliente(spark_fixture):
+    original_products = spark_fixture.createDataFrame(
+        [
+            ("P1", "CAT1"),
+            ("P2", "CAT1"),
+            ("P3", "CAT3"),
+            ("P4", "CAT3"),
+        ],
+        StructType(
+            [
+                StructField("COD_ID_PRODUTO", StringType(), True),
+                StructField("COD_ID_CATEGORIA_PRODUTO", StringType(), True),
+            ]
+        ),
+    )
+    original_produtos_by_cliente = spark_fixture.createDataFrame(
+        [
+            ("L1", "C1", "P1", 1, 10.00),
+            ("L1", "C1", "P2", 2, 20.00),
+            ("L1", "C2", "P3", 3, 30.00),
+            ("L1", "C2", "P4", 4, 40.00),
+        ],
+        StructType(
+            [
+                StructField("COD_ID_LOJA", StringType(), True),
+                StructField("COD_ID_CLIENTE", StringType(), True),
+                StructField("COD_ID_PRODUTO", StringType(), True),
+                StructField("qtd_de_transacoes", LongType(), True),
+                StructField("qtd_total_kg", DoubleType(), True),
+            ]
+        ),
+    )
+
+    transformed = calcula_qtd_de_transacoes_por_categoria_por_cliente(
+        original_products, original_produtos_by_cliente
+    )
+
+    expected = spark_fixture.createDataFrame(
+        [
+            ("L1", "C1", "CAT1", 3, 30.00),
+            ("L1", "C2", "CAT3", 7, 70.00),
+        ],
+        StructType(
+            [
+                StructField("COD_ID_LOJA", StringType(), True),
+                StructField("COD_ID_CLIENTE", StringType(), True),
+                StructField("COD_ID_CATEGORIA_PRODUTO", StringType(), True),
+                StructField("qtd_de_transacoes", LongType(), True),
+                StructField("qtd_total_kg", DoubleType(), True),
             ]
         ),
     )
