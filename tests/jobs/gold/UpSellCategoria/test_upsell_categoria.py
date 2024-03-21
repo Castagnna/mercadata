@@ -3,6 +3,7 @@ from pyspark.sql.types import (
     StructType,
     StructField,
     StringType,
+    IntegerType,
     LongType,
     DoubleType,
     ArrayType,
@@ -12,7 +13,7 @@ from etl.jobs.gold.UpSellCategoria.functions import (
     prepara_produtos_por_cliente,
     pega_produtos_que_o_cliente_ja_comprou,
     calcula_qtd_de_transacoes_por_categoria_por_cliente,
-    # calcula_top_5_categorias_por_cliente,
+    calcula_top_5_categorias_por_cliente,
     # prepara_vendas_por_produto,
     # calcula_top_10_produtos_por_categoria,
     # agrega_e_ordena_produtos,
@@ -169,6 +170,56 @@ def test_calcula_qtd_de_transacoes_por_categoria_por_cliente(spark_fixture):
                 StructField("COD_ID_CATEGORIA_PRODUTO", StringType(), True),
                 StructField("qtd_de_transacoes", LongType(), True),
                 StructField("qtd_total_kg", DoubleType(), True),
+            ]
+        ),
+    )
+
+    assertDataFrameEqual(transformed, expected)
+
+
+def test_calcula_top_5_categorias_por_cliente(spark_fixture):
+    original = spark_fixture.createDataFrame(
+        [
+            ("L1", "C1", "CAT1", 1, 10.00),
+            ("L1", "C1", "CAT2", 2, 10.00),
+            ("L1", "C1", "CAT3", 3, 10.00),
+            ("L1", "C1", "CAT4", 4, 10.00),
+            ("L1", "C1", "CAT5a", 5, 10.00),
+            ("L1", "C1", "CAT5b", 5, 20.00),
+            ("L1", "C2", "CAT1", 1, 10.00),
+            ("L2", "C1", "CAT1", 1, 10.00),
+            ("L2", "C1", "CAT2", 1, 20.00),
+        ],
+        StructType(
+            [
+                StructField("COD_ID_LOJA", StringType(), True),
+                StructField("COD_ID_CLIENTE", StringType(), True),
+                StructField("COD_ID_CATEGORIA_PRODUTO", StringType(), True),
+                StructField("qtd_de_transacoes", LongType(), True),
+                StructField("qtd_total_kg", DoubleType(), True),
+            ]
+        ),
+    )
+
+    transformed = calcula_top_5_categorias_por_cliente(original)
+
+    expected = spark_fixture.createDataFrame(
+        [
+            ("L1", "C1", "CAT5b", 1),
+            ("L1", "C1", "CAT5a", 2),
+            ("L1", "C1", "CAT4", 3),
+            ("L1", "C1", "CAT3", 4),
+            ("L1", "C1", "CAT2", 5),
+            ("L1", "C2", "CAT1", 1),
+            ("L2", "C1", "CAT2", 1),
+            ("L2", "C1", "CAT1", 2),
+        ],
+        StructType(
+            [
+                StructField("COD_ID_LOJA", StringType(), True),
+                StructField("COD_ID_CLIENTE", StringType(), True),
+                StructField("COD_ID_CATEGORIA_PRODUTO", StringType(), True),
+                StructField("rk_categoria", IntegerType(), True),
             ]
         ),
     )
