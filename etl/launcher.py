@@ -48,8 +48,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
-
+def main() -> None:
     args = _parse_args()
 
     job_kwargs = dict([x.split("=") for x in (args.job_kwargs or [])])
@@ -68,3 +67,7 @@ if __name__ == "__main__":
         args.noop,
         **job_kwargs,
     ).run()
+
+
+if __name__ == "__main__":
+    main()
