@@ -3,7 +3,6 @@ from datetime import datetime
 from dateutil.parser import parse as dateparse
 from pyspark.sql import DataFrame
 from tools.spark import start_spark
-from etl.configs import ROOT
 
 
 class BaseSetup(ABC):
@@ -15,6 +14,7 @@ class BaseSetup(ABC):
         date_ref="today",
         dry_run=False,
         noop=False,
+        args=[],
         kwargs={},
     ) -> object:
         self.__env = env
@@ -25,8 +25,8 @@ class BaseSetup(ABC):
         )
         self.__dry_run = dry_run
         self.__noop = noop
+        self.__args = args
         self.__kwargs = kwargs
-        self.__root = ROOT
 
     @property
     def env(self) -> str:
@@ -35,10 +35,6 @@ class BaseSetup(ABC):
     @property
     def spark(self):
         return self.__spark
-
-    @property
-    def root(self) -> str:
-        return self.__root
     
     @property
     def dry_run(self) -> str:
