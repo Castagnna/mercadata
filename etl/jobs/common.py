@@ -1,14 +1,15 @@
 from functools import partial
 
 
-def pipe(data, *funcs):
+def pipe(data, *functions):
     """Pipe a value through a sequence of functions"""
-    for func in funcs:
-        data = func(data)
+    for fn in functions:
+        data = fn(data)
     return data
 
-def upartial(f, *args, **kwargs):
+
+def upartial(fn, *args, **kwargs):
     """An upgraded functools partial which accepts positional arguments."""
-    params = f.__code__.co_varnames[1:]
+    params = fn.__code__.co_varnames[1:]
     kwargs = {**{param: arg for param, arg in zip(params, args)}, **kwargs}
-    return partial(f, **kwargs)
+    return partial(fn, **kwargs)
