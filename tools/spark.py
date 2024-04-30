@@ -21,7 +21,7 @@ def start_spark(
     set_checkpoint_dir=False,
     extra_conf={},
     print_conf=False,
-):
+) -> SparkSession:
     print(f"{app_name = }")
     print(f"{deploy_mode = }")
     if deploy_mode == "cluster":
