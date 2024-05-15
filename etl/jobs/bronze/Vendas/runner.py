@@ -5,7 +5,7 @@ from .functions import formata_dados
 
 
 class Setup(BaseSetup):
-    def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop):
+    def __init__(self, env, date_ref, app_name, deploy_mode, dry_run, noop) -> None:
         super(Setup, self).__init__(
             env=env,
             date_ref=date_ref,

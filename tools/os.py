@@ -5,16 +5,20 @@ import os
 import logging
 
 
-def get_total_memory():
+def get_project_root() -> str:
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def get_total_memory() -> int:
     membytes = os.sysconf("SC_PAGESIZE") * os.sysconf("SC_PHYS_PAGES")
     return membytes >> 30  # dividing by 1024^3 (1 GB)
 
 
-def get_num_cores():
+def get_num_cores() -> int:
     return os.sysconf("SC_NPROCESSORS_ONLN")
 
 
-def check_write_permission(mount_point):
+def check_write_permission(mount_point: str) -> bool:
     path = os.path.join(mount_point, "birdy")
     try:
         with open(path, "w") as f:
@@ -25,11 +29,10 @@ def check_write_permission(mount_point):
         if e.strerror == "Read-only file system":
             logging.info(f"{mount_point} is Read-only.")
             pass
-
     return False
 
 
-def choose_storage_device(return_all_possible=False):
+def choose_storage_device(return_all_possible: bool = False):
     process = subprocess.run(["df"], stdout=subprocess.PIPE)
 
     filesystems = (

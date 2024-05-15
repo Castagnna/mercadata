@@ -28,14 +28,14 @@ sudo apt update
 
 sudo apt upgrade
 
-sudo apt install python3.11-venv
+sudo apt install python3.12-venv
 ```
 
 Activate the virtual environment and install requirements:
 ```bash
-python3.11 -m venv spark
+python3.12 -m venv ./venv
 
-source spark/bin/activate
+source venv/bin/activate
 
 pip install -r requirements.txt
 ```
@@ -51,13 +51,13 @@ cd mercadata/etl
 ```
 
 ```bash
-python launcher.py gold UpSellCategoria -e prd -m standalone --dry-run
+python3 launcher.py gold UpSellCategoria -e prd -m standalone --dry-run
 ```
 
 ```bash
-python launcher.py bronze Vendas -e prd -m standalone -d 20220102T010203 --noop
+python3 launcher.py bronze Vendas -e prd -m standalone -d 20220102T010203 --noop
 ```
 
 ```bash
-python launcher.py bronze Vendas -e prd -m standalone -d 20220102T010203
+python3 launcher.py bronze Vendas -e prd -m standalone -d 20220102T010203
 ```

@@ -1,17 +1,20 @@
 from os import path as P
-from tools.schemas.handler import get_schema
 from pyspark.sql import Window as W
 from pyspark.sql import functions as F
+from pyspark.sql import DataFrame
+from tools.schemas.handler import get_schema
+from tools.os import get_project_root
 
 ROOTS = {
     "gcp": "gs://mercafacil/data",
-    "os": "/home/castagna/github/mercadata/data",
+    "s3": "s3a://mercafacil/data",
+    "os": P.join(get_project_root(), "data"),
 }
 
 
 def split_skewed_data(
     skewed_data, partition_by_columns, desired_rows_per_output_file=1e3, provider="os"
-):
+) -> None:
     """split skewed data with same number of rows per partition
 
     Created based on stackoverflow.com/questions/53037124/partitioning-a-large-skewed-dataset-in-s3-with-sparks-partitionby-method/65433689#65433689
@@ -47,7 +50,7 @@ def read_csv(
     drop_fields=None,
     custom_schema=None,
     dry_run=False,
-):
+) -> DataFrame:
     # TODO: def resolve_paths()
     paths = P.join(ROOTS[provider], env, layer, event)
     print(f"{paths = }")
@@ -74,7 +77,7 @@ def read_parquet(
     provider="os",
     select_fields=["*"],
     dry_run=False,
-):
+) -> DataFrame:
     # TODO: def resolve_paths()
     paths = P.join(ROOTS[provider], env, layer, event)
     print(f"{paths = }")
