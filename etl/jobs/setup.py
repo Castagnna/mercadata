@@ -1,21 +1,21 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from dateutil.parser import parse as dateparse
-from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession, DataFrame
 from tools.spark import start_spark
 
 
 class BaseSetup(ABC):
     def __init__(
         self,
-        env="prd",
-        app_name="Spark Job",
-        deploy_mode="standalone",
-        date_ref="today",
-        dry_run=False,
-        noop=False,
-        args=[],
-        kwargs={},
+        env: str = "prd",
+        app_name: str = "Spark Job",
+        deploy_mode: str = "standalone",
+        date_ref: str = "today",
+        dry_run: bool = False,
+        noop: bool = False,
+        *args: tuple,
+        **kwargs: dict,
     ) -> None:
         self.__env = env
         self.__spark = start_spark(app_name, deploy_mode)
@@ -33,9 +33,9 @@ class BaseSetup(ABC):
         return self.__env
 
     @property
-    def spark(self):
+    def spark(self) -> SparkSession:
         return self.__spark
-    
+
     @property
     def dry_run(self) -> str:
         return self.__dry_run
@@ -43,11 +43,11 @@ class BaseSetup(ABC):
     @property
     def noop(self) -> str:
         return self.__noop
-    
+
     @property
     def job_start_dttm(self) -> datetime:
         return self.__job_start_dttm
-    
+
     @property
     def date_ref(self) -> datetime:
         return self.__date_ref
@@ -67,15 +67,15 @@ class BaseSetup(ABC):
         output.write.format("noop").mode("overwrite").save()
 
     @abstractmethod
-    def write(self, output) -> None:
+    def write(self, output: DataFrame) -> None:
         if self.noop:
             self.write_noop(output)
         else:
             pass
 
     def run(self) -> None:
-        loads = self.load()
+        inputs = self.load()
         if not self.dry_run:
-            output = self.transform(**loads)
+            output = self.transform(**inputs)
             self.write(output)
         self.spark.stop()
