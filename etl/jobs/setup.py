@@ -16,7 +16,7 @@ class BaseSetup(ABC):
         noop=False,
         args=[],
         kwargs={},
-    ) -> object:
+    ) -> None:
         self.__env = env
         self.__spark = start_spark(app_name, deploy_mode)
         self.__job_start_dttm = datetime.now()
@@ -63,17 +63,17 @@ class BaseSetup(ABC):
         return dataframe
 
     @staticmethod
-    def write_noop(output):
+    def write_noop(output) -> None:
         output.write.format("noop").mode("overwrite").save()
 
     @abstractmethod
-    def write(self, output):
+    def write(self, output) -> None:
         if self.noop:
             self.write_noop(output)
         else:
             pass
 
-    def run(self):
+    def run(self) -> None:
         loads = self.load()
         if not self.dry_run:
             output = self.transform(**loads)
