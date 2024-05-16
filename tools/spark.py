@@ -36,11 +36,11 @@ def start_spark(
     elif deploy_mode == "standalone":
         # Mostly reverse-engieneered from http://spark-configuration.luminousmen.com/
 
-        if not local_dir:
-            mount_points = choose_storage_device(return_all_possible=True)
-            local_dir = ",".join(
-                join(mount_point, "spark") for mount_point in mount_points
-            )
+        # if not local_dir:
+        #     mount_points = choose_storage_device(return_all_possible=True)
+        #     local_dir = ",".join(
+        #         join(mount_point, "spark") for mount_point in mount_points
+        #     )
 
         ncores = get_num_cores()
         memgibs = get_total_memory()
@@ -66,7 +66,7 @@ def start_spark(
 
         conf = {
             "spark.master": "local[*]",
-            "spark.local.dir": local_dir,
+            # "spark.local.dir": local_dir,
             "spark.default.parallelism": default_parallelism,
             "spark.memory.fraction": "0.8",
             "spark.dynamicAllocation.enabled": "false",
