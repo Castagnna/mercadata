@@ -1,7 +1,9 @@
 __all__ = ["start_spark"]
 
 from pyspark.sql import SparkSession
-from os.path import join
+
+# from os.path import join
+from tools.logging import logging
 from tools.os import get_total_memory, get_num_cores, choose_storage_device
 
 OVERHEAD_FRACTION = 0.1
@@ -22,8 +24,8 @@ def start_spark(
     extra_conf={},
     print_conf=False,
 ) -> SparkSession:
-    print(f"{app_name = }")
-    print(f"{deploy_mode = }")
+    logging.info(f"{app_name = }")
+    logging.info(f"{deploy_mode = }")
     if deploy_mode == "cluster":
         # trust the cluster configuration except unless explicit values are given
 
@@ -123,6 +125,7 @@ def start_spark(
 
     sparkConf = spark.sparkContext.getConf().getAll()
     if print_conf:
-        print("\n".join(f"{k}:\t{v}" for k, v in sparkConf if len(v) < 500))
-
+        msg = "Spark Configuration\n"
+        msg += "\n".join(f"\t{k}:\t{v}" for k, v in sparkConf if len(v) < 500)
+        logging.info(msg)
     return spark
