@@ -1,6 +1,7 @@
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
-from tools.io import read_csv
+from tools.readers import read_csv
+from tools.logging import logmetrics
 from .functions import formata_dados
 
 
@@ -28,6 +29,7 @@ class Setup(BaseSetup):
         }
 
     @staticmethod
+    @logmetrics(["VAL_VALOR_COM_DESC"])
     def transform(vendas: DataFrame) -> DataFrame:
         return formata_dados(vendas)
 

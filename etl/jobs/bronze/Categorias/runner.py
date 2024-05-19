@@ -1,6 +1,6 @@
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
-from tools.io import read_parquet
+from tools.readers import read_parquet
 from .functions import formata_dados
 
 

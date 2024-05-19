@@ -7,6 +7,9 @@ if not any("/mercadata/etl/.." in p for p in sys.path):
     path = os.path.join(os.getcwd(), os.pardir)
     sys.path.append(path)
 
+from jobs.setup import BaseSetup
+from tools.logging import logging
+
 
 def _parse_args():
     from argparse import ArgumentParser, RawDescriptionHelpFormatter
@@ -55,10 +58,14 @@ def main() -> None:
 
     app_name = "{}.{}.{}".format(args.layer, args.job_name, args.env)
     module = "etl.jobs.{}.{}.runner".format(args.layer, args.job_name)
-    print(f"{module = }")
+
+    logging.info(f"{module = }")
+
     job_module = importlib.import_module(module)
 
-    job_module.Setup(
+    Setup: BaseSetup = getattr(job_module, "Setup")
+
+    Setup(
         args.env,
         args.datetime,
         app_name,

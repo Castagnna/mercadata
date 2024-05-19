@@ -3,6 +3,7 @@ from datetime import datetime
 from dateutil.parser import parse as dateparse
 from pyspark.sql import SparkSession, DataFrame
 from tools.spark import start_spark
+from tools.logging import logend
 
 
 class BaseSetup(ABC):
@@ -79,3 +80,5 @@ class BaseSetup(ABC):
             output = self.transform(**inputs)
             self.write(output)
         self.spark.stop()
+
+        logend(self.job_start_dttm)
