@@ -3,7 +3,7 @@ from typing import Any, Callable
 
 
 def pipe(data: Any, *functions: Callable) -> Any:
-    """Pipe a value through a sequence of functions"""
+    """Pipe a value through a sequence of functions."""
     for fn in functions:
         data = fn(data)
     return data
