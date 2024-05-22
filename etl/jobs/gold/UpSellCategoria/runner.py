@@ -1,7 +1,7 @@
 from pyspark.sql import DataFrame
 from jobs.setup import BaseSetup
 from tools.readers import read_parquet
-from etl.jobs.common import pipe, upartial
+from tools.pipes import pipe, upartial
 from .functions import (
     prepara_produtos,
     prepara_produtos_por_cliente,

@@ -25,7 +25,7 @@ def read_csv(
 ) -> DataFrame:
     # TODO: def resolve_paths()
     paths = P.join(ROOTS[provider], env, layer, event)
-    logging.info(f"{paths = }")
+    logging.info(f"Input  {paths = }")
 
     schema = custom_schema or get_schema("events", event, select_fields, drop_fields)
 
@@ -52,7 +52,7 @@ def read_parquet(
 ) -> DataFrame:
     # TODO: def resolve_paths()
     paths = P.join(ROOTS[provider], env, layer, event)
-    logging.info(f"{paths = }")
+    logging.info(f"Input {paths = }")
 
     if dry_run:
         return
