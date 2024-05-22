@@ -1,9 +1,9 @@
 from os import path as P
 from s3fs import S3FileSystem
-from tools.caos.base import BaseObjectStorageClient
+from tools.caos.interface import IObjectStorageClient
 
 
-class AWSObjectStorageClient(BaseObjectStorageClient):
+class AWSObjectStorageClient(IObjectStorageClient):
     """AWS Object Storage client."""
     def __init__(
         self,

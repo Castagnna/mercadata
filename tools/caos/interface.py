@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class BaseObjectStorageClient(ABC):
-    """Base class for Object Storage operations."""
+class IObjectStorageClient(ABC):
+    """Defines an interface class for Object Storage."""
     def __init__(
         self,
         provider: str,
